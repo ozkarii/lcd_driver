@@ -1,42 +1,42 @@
+#include "stm32f1xx_hal.h"
 #include "lcd.h"
+#include "main.h"
 
-void lcd_set_rs_high()
+inline void lcd_set_rs_high()
 {
 	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 1);
 }
 
-void lcd_set_rs_low()
+inline void lcd_set_rs_low()
 {
 	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 0);
 }
 
-void lcd_set_en_high()
+inline void lcd_set_en_high()
 {
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
 }
 
-void lcd_set_en_low()
+inline void lcd_set_en_low()
 {
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
 }
 
-void lcd_set_rw_high()
+inline void lcd_set_rw_high()
 {
     HAL_GPIO_WritePin(LCD_RW_GPIO_Port, LCD_RW_Pin, 1);
 }
-void lcd_set_rw_low()
+inline void lcd_set_rw_low()
 {
     HAL_GPIO_WritePin(LCD_RW_GPIO_Port, LCD_RW_Pin, 0);
 
 }
 
-void lcd_pulse_en(uint16_t delay)
+inline void lcd_pulse_en(uint16_t delay)
 {
-	HAL_Delay(delay);
 	lcd_set_en_high();
 	HAL_Delay(delay);
 	lcd_set_en_low();
-	HAL_Delay(delay);
 }
 
 void lcd_write_data(uint8_t data)
@@ -92,7 +92,7 @@ void lcd_set_ddram_address(uint8_t address)
 	lcd_set_rw_low();
 
 	address |= (1 << 7);
-	lcd_write_data(address);
+	lcd_send_command(address);
 	HAL_Delay(LCD_DEFAULT_DELAY);
 }
 
@@ -125,14 +125,13 @@ void lcd_init()
 	HAL_Delay(5);
 	lcd_send_command(LCD_RETURN_HOME);
 	lcd_send_command(LCD_ON_NO_CURSOR);
-	lcd_set_ddram_address(0);
 }
 
 void lcd_print(const char* str) 
 {
 	int i = 0;
-    while (str[i] != '\0' && i < 16) {
-    	if (i == 8) {
+    while (str[i] != '\0' && i < LCD_LENGTH) {
+    	if (i == LCD_LENGTH/2) {
     		lcd_set_ddram_address(40);
     	}
         lcd_write_data(str[i]);

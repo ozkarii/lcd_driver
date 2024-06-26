@@ -5,6 +5,7 @@
 #define LCD_CLEAR 0x01
 #define LCD_RETURN_HOME 0x02
 #define LCD_ON_NO_CURSOR 0x0C
+#define LCD_LENGTH 16
 
 /**
  * @brief Set the Register Select pin high
